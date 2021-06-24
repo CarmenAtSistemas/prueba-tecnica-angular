@@ -1,0 +1,33 @@
+<div>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light d-flex">
+    <div id="nav-mobile">
+      <div class="ta-c pr">
+        <a class="button-collapse pa" (click)="toggle()" *ngIf="!showSidebar">
+          <span class="btn-bar pr mv15">
+          </span>
+        </a>
+        <div class="ib title-wrapper t-uc text">
+          <span> {{titulo | translate}} </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+</div>
+
+<nav id="sidebar" [ngClass]="{ 'active' : showSidebar }">
+
+  <ul class="list-unstyled components side-nav hmenu-mobile">
+    <li class="ph10 pb5" *ngFor="let item of menu;let i = index">
+      <a class="menu-btn t-uc text" [routerLink]="['/' + item.path ]" (click)="toggle(); changeTitle(item.label) ">
+        <b class="pr">
+          {{item.label | translate}}
+          <i class="arrow"></i>
+        </b>
+      </a>
+    </li>
+  </ul>
+</nav>
+
+
+<div class="overlay" [ngClass]="{'active' : showSidebar}" (click)="toggle()"></div>

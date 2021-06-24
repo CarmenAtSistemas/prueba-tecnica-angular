@@ -1,0 +1,51 @@
+@media(max-width: 991px) {
+    fieldset.scheduler-border {
+        margin-top: 2% !important;
+    }
+}
+
+input.capitalize {
+    text-transform: capitalize;
+}
+
+input.uppercase {
+    text-transform: uppercase;
+}
+
+fieldset.scheduler-border {
+    width: auto;
+    margin: 10em 4em !important;
+}
+
+.calendar {
+    border: white;
+}
+
+.display-flex {
+    display: flex;
+}
+
+.margin-top {
+    margin-top: 15px;
+}
+
+.pad {
+    padding-top: 5px;
+    padding-left: 5px;
+}
+
+.check-label {
+    padding-right: 10px;
+}
+
+.check-input {
+    position: absolute;
+}
+
+@-moz-document url-prefix() {
+
+    .mozilla {
+        width: calc(100% - 38px);
+    }
+
+}

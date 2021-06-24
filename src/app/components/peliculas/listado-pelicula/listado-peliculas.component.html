@@ -1,0 +1,30 @@
+<div class="margin-card">
+
+  <div class="container">
+
+    <div class="row" *ngFor="let pelicula of listadoPeliculas">
+
+      <div class="card" id={{pelicula.id}} (click)="verDetalle(pelicula)">
+        <div class="card-header text-center">
+          <span class="text-center">{{pelicula.title}}</span>
+        </div>
+        <img class="card-img" [src]='pelicula.poster' [alt]="pelicula.title">
+        <div class="card-body">
+          <span *ngFor="let tag of pelicula.genre">
+            #{{tag}}
+          </span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="row margin-button">
+    <div class="col-12">
+      <button type="submit" class="btn btn-outline-add" routerLink="/peliculas/nueva">
+        <fa-icon icon="plus"></fa-icon>
+      </button>
+    </div>
+  </div>
+
+</div>

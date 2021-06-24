@@ -1,0 +1,26 @@
+{
+  "menu": {
+    "actors": "Actores",
+    "movies": "Películas",
+    "studios": "Estudios"
+  },
+  "movie": {
+    "label": {
+      "header": "Nueva Película",
+      "actors": "Actores",
+      "duration": "Duración",
+      "genres": "Géneros",
+      "poster": "Póster (url)",
+      "rating": "Puntuación",
+      "studio": "Estudio",
+      "title": "Título",
+      "year": "Año"
+    }
+  },
+  "button": {
+    "edit": "Editar",
+    "delete": "Borrar",
+    "new": "Nuevo",
+    "save": "Guardar"
+  }
+}

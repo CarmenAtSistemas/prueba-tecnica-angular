@@ -1,0 +1,53 @@
+<div class="margin-card">
+    <div class="card mb-3" id={{pelicula.id}}>
+        <img class="card-img-top" [src]='pelicula.poster' [alt]="pelicula.title">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-6">
+                    <label>{{ 'movie.label.rating' | translate }} </label>
+                    <label>{{pelicula.imdbRating}}</label>
+                </div>
+                <div class="col-6">
+                    <label>{{ 'movie.label.duration' | translate }}</label>
+                    <label>{{pelicula.duration | duracion_horas_minutos}}</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-6">
+                    <label>{{ 'movie.label.actors' | translate }}</label>
+                    <label *ngFor="let actor of actores">
+                        {{actor.first_name + ' ' + actor.last_name}}
+                    </label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <label>{{ 'movie.label.studio' | translate }}</label>
+                    <label>{{ estudio }} </label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <label>{{ 'movie.label.genres' | translate }}</label>
+                    <label *ngFor="let genero of pelicula.genre">
+                        #{{genero}}
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- <mat-grid-list cols="1" [rowHeight]="'100px'" [gutterSize]="'1px'">
+        <mat-grid-tile [colspan]="1" [rowspan]="1">
+            <button mat-icon-button (click)="editar(pelicula)">
+                <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button>
+                <mat-icon>delete</mat-icon>
+            </button>
+        </mat-grid-tile>
+    </mat-grid-list> -->
+
+</div>
+

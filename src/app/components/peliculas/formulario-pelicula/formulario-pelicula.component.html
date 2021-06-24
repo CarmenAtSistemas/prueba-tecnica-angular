@@ -1,0 +1,61 @@
+<div class="margin-card">
+  <div class="card">
+    <div class="card-body">
+      <div class="control-group">
+        <form [formGroup]="peliculaForm">
+          <div class="form-row">
+            <div class="form-group col-md-6 col-lg-4">
+              <label class="text-muted" for="titulo">{{ 'movie.label.title' | translate }}</label>
+              <input type="text"class="form-control" formControlName="titulo"/>
+            </div>
+            <div class="form-group col-md-6 col-lg-4">
+              <label class="text-muted" for="poster">{{ 'movie.label.poster' | translate }}</label>
+              <input type="text" class="form-control" formControlName="poster"/>
+            </div>
+            <div class="form-group col-md-6 col-lg-4">
+              <label class="text-muted" for="generos">{{ 'movie.label.genres' | translate }}</label>
+              <input type="text" class="form-control" formControlName="generos"/>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-6 col-lg-4">
+              <label class="text-muted" for="actores">{{ 'movie.label.actors' | translate }}</label>
+              <select multiple name="actores" formControlName="actores">
+                <option *ngFor="let actor of actores" [ngValue]="actor.id">
+                  {{ actor.first_name }} {{actor.last_name}}
+                </option>
+              </select>
+            </div>
+            <div class="form-group col-md-6 col-lg-4">
+              <label class="text-muted" for="estudio">{{ 'movie.label.studio' | translate }}</label>
+              <select name="estudio" formControlName="estudio">
+                <option *ngFor="let estudio of estudios" [ngValue]="estudio.id">
+                  {{ estudio.name }}
+                </option>
+              </select>
+            </div>
+            <div class="form-group col-md-6 col-lg-4">
+              <label class="text-muted" for="anio">{{ 'movie.label.year' | translate }}</label>
+              <select name="anio" formControlName="anio">
+                <option *ngFor="let anio of anios" [ngValue]="anio">
+                  {{ anio }}
+                </option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-6 col-lg-4">
+              <label class="text-muted" for="duracion">{{ 'movie.label.duration' | translate }}</label>
+              <input type="text" class="form-control" formControlName="duracion" />
+            </div>
+            <div class="form-group col-md-6 col-lg-4">
+              <label class="text-muted" for="puntuacion">{{ 'movie.label.rating' | translate }}</label>
+              <input type="text" class="form-control" formControlName="puntuacion" />
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+</div>
