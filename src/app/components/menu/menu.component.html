@@ -1,33 +1,41 @@
 <div>
+  
   <nav class="navbar navbar-expand-lg navbar-light bg-light d-flex">
+    
     <div id="nav-mobile">
-      <div class="ta-c pr">
-        <a class="button-collapse pa" (click)="toggle()" *ngIf="!showSidebar">
-          <span class="btn-bar pr mv15">
-          </span>
-        </a>
-        <div class="ib title-wrapper t-uc text">
+      <div class="text-center fs-5">
+        <i class="bi bi-list text-danger button-collapse position-absolute" (click)="toggle()" *ngIf="!showSidebar && !showArrow"></i>
+        <i width="24px" class="bi bi-arrow-left text-danger button-collapse position-absolute fs-5" (click)="back()" *ngIf="showArrow"></i>
+        <div class="d-inline-block position-relative my-1 w-75 text-uppercase text-center text-truncate">
           <span> {{titulo | translate}} </span>
         </div>
       </div>
     </div>
+
   </nav>
 
 </div>
 
 <nav id="sidebar" [ngClass]="{ 'active' : showSidebar }">
 
-  <ul class="list-unstyled components side-nav hmenu-mobile">
-    <li class="ph10 pb5" *ngFor="let item of menu;let i = index">
-      <a class="menu-btn t-uc text" [routerLink]="['/' + item.path ]" (click)="toggle(); changeTitle(item.label) ">
-        <b class="pr">
-          {{item.label | translate}}
-          <i class="arrow"></i>
-        </b>
-      </a>
-    </li>
-  </ul>
-</nav>
+  <div class="side-nav text-uppercase">
+    <div class="mx-3 mb-6 fs-5 position-relative">
+      <span class=" ">{{'menu.label' | translate}}</span>
+        <i role="button" class="bi bi-x-circle menu-list-icon" (click)="toggle()"></i>
+    </div>
+    <ul class="mt-3 list-unstyled hmenu-mobile">
+      <li class="mx-3 mb-2 border-bottom border-1" *ngFor="let item of menu;let i = index">
+        <a class="menu-btn" [routerLink]="['/' + item.path ]" (click)="toggle(); changeTitle(item.label)">
+          <b class="position-relative">
+            {{item.label | translate}}
+            <i class="bi bi-arrow-right text-danger menu-list-icon fs-5"></i>
+          </b>
+        </a>
+      </li>
+    </ul>
+  </div>
+  
 
+</nav>
 
 <div class="overlay" [ngClass]="{'active' : showSidebar}" (click)="toggle()"></div>

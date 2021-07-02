@@ -3,11 +3,13 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { Actor, Estudio, Pelicula } from '@shared/models';
 import { getAnios, getPuntuaciones } from '@shared/functions/formulario-funciones';
 import { ActivatedRoute, Params } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 import {
   ActorService,
   EstudioService,
   PeliculaService
 } from '@shared/services';
+import { DataService } from '../../../shared/services/data/data.service';
 
 @Component({
   selector: 'pt-formulario-pelicula',
@@ -38,15 +40,18 @@ export class FormularioPeliculaComponent implements OnInit {
   constructor(
     private actorService: ActorService,
     private activatedRoute: ActivatedRoute,
+    private dataService: DataService,
     private estudioService: EstudioService,
     private formBuilder: FormBuilder,
     private peliculaService: PeliculaService
+    private translateService: TranslateService
   ) { }
 
   ngOnInit() {
     this.inicializarFormulario();
     this.cargarDatosGenerales();
     this.cargarDatosPeliculaSeleccionada();
+    this.dataService?.ptMenu?.changeShownMenuIcons(true);
  }
 
   inicializarFormulario() {
@@ -83,16 +88,19 @@ export class FormularioPeliculaComponent implements OnInit {
       const id = params.id;
       if (id) {
         this.obtenerDatosPelicula(id);
+      } else {
+        this.dataService?.ptMenu?.changeTitle(this.translateService.instant('movie.label.header'));
+        this.formularioLoaded = true;
       }
     });
   }
 
   obtenerDatosPelicula(id: number) {
-    
-        
+            
     this.peliculaService.getPeliculaById(id).subscribe(
       (response: Pelicula) => {
         this.pelicula = response;
+        this.dataService?.ptMenu?.changeTitle(this.pelicula.title + ' (' + this.pelicula.year + ')');
         this.peliculaForm.controls.titulo.setValue(this.pelicula.title);
         this.peliculaForm.controls.poster.setValue(
           this.pelicula.poster

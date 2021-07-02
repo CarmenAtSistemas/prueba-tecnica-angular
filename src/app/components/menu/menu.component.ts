@@ -1,3 +1,4 @@
+import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { MenuService } from '@shared/services/menu/menu.service';
@@ -12,20 +13,23 @@ export class MenuComponent implements OnInit {
   menu: Array<any>;
   showSidebar: boolean;
   titulo: string = '';
+  showArrow: boolean;
 
   constructor(
+    private location: Location,
     private menuService: MenuService,
-    public translate: TranslateService
+    private translateService: TranslateService
   ) {
 
-    translate.addLangs(['en', 'es']);
-    translate.setDefaultLang('es');
     this.menu = this.menuService.getMenu();
     this.showSidebar = false;
+    this.showArrow = false;
+
   }
 
   ngOnInit() {
     this.menu = this.menuService.getMenu();
+    (this.location.path().endsWith('peliculas')) && (this.titulo = this.translateService.instant('menu.movies'));
   }
 
   toggle() {
@@ -36,7 +40,16 @@ export class MenuComponent implements OnInit {
     }
   }
 
-  changeTitle(title: string) {
-    this.titulo = title;
+  back() {
+    this.location.back();
   }
+
+  changeTitle(title: string | undefined) {
+    this.titulo = title || '';
+  }
+
+  changeShownMenuIcons(show: boolean) {
+    this.showArrow = show;
+  }
+
 }
