@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Actor, Estudio, Pelicula } from '@shared/models';
-import { getAnios, getPuntuaciones } from '@shared/functions/formulario-funciones';
+import { getAnios } from '@shared/functions/formulario-funciones';
 import { ActivatedRoute, Params } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import {
@@ -43,7 +43,7 @@ export class FormularioPeliculaComponent implements OnInit {
     private dataService: DataService,
     private estudioService: EstudioService,
     private formBuilder: FormBuilder,
-    private peliculaService: PeliculaService
+    private peliculaService: PeliculaService,
     private translateService: TranslateService
   ) { }
 
@@ -78,8 +78,6 @@ export class FormularioPeliculaComponent implements OnInit {
     });
 
     this.anios = getAnios();
-
-    this.puntuaciones = getPuntuaciones();
   
   }
 
@@ -90,7 +88,6 @@ export class FormularioPeliculaComponent implements OnInit {
         this.obtenerDatosPelicula(id);
       } else {
         this.dataService?.ptMenu?.changeTitle(this.translateService.instant('movie.label.header'));
-        this.formularioLoaded = true;
       }
     });
   }
