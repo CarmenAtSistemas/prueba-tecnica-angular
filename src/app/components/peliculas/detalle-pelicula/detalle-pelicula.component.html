@@ -35,19 +35,17 @@
                 </div>
             </div>
         </div>
+
+        <div class="position-fixed bottom-0 end-0">
+            <button type="button" class="btn btn-success my-3" (click)="editar(pelicula)">
+                <i class="bi bi-pencil"></i>
+            </button>
+            <button type="button" class="btn btn-danger m-3">
+                <i class="bi bi-trash"></i>
+            </button>
+        </div>
+
     </div>
-
-
-    <!-- <mat-grid-list cols="1" [rowHeight]="'100px'" [gutterSize]="'1px'">
-        <mat-grid-tile [colspan]="1" [rowspan]="1">
-            <button mat-icon-button (click)="editar(pelicula)">
-                <mat-icon>edit</mat-icon>
-            </button>
-            <button mat-icon-button>
-                <mat-icon>delete</mat-icon>
-            </button>
-        </mat-grid-tile>
-    </mat-grid-list> -->
 
 </div>
 
