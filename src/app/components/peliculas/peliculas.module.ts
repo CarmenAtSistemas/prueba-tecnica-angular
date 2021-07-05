@@ -1,12 +1,13 @@
-import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { SharedModule } from '@shared/shared.module';
-import { PeliculasRoutingModule } from './peliculas-routing.module';
 import {
   DetallePeliculaComponent,
   FormularioPeliculaComponent,
-  ListadoPeliculasComponent,
+  ListadoPeliculasComponent
 } from './index';
+import { PeliculasRoutingModule } from './peliculas-routing.module';
+
+
 
 @NgModule({
   declarations: [
@@ -15,9 +16,8 @@ import {
     ListadoPeliculasComponent
   ],
   imports: [
-    CommonModule,
     PeliculasRoutingModule,
-    SharedModule,
+    SharedModule
   ],
   providers: []
 })

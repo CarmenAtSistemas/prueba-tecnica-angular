@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Pelicula } from '../../models/pelicula.model';
 import { Observable } from 'rxjs';
+import { Pelicula } from '../../models/pelicula.model';
 
 
 @Injectable({
@@ -14,6 +14,7 @@ export class PeliculaService {
 
   getPeliculaById(id: number): Observable<Pelicula> {
     return this.http.get<Pelicula>(this.url + '/' + id);
+
   }
 
   getAllPeliculas(): Observable<Array<Pelicula>> {
