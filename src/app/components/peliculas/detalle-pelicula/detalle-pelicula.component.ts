@@ -61,6 +61,5 @@ export class DetallePeliculaComponent implements OnInit {
 
     this.router.navigate([this.urlBase + this.urlEditar + item.id]);
   }
-  }
 
 }
