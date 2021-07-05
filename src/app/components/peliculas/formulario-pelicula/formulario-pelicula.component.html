@@ -1,61 +1,100 @@
 <div class="margin-card">
-  <div class="card">
-    <div class="card-body">
-      <div class="control-group">
-        <form [formGroup]="peliculaForm">
-          <div class="form-row">
-            <div class="form-group col-md-6 col-lg-4">
-              <label class="text-muted" for="titulo">{{ 'movie.label.title' | translate }}</label>
-              <input type="text"class="form-control" formControlName="titulo"/>
+  <div class="container">
+    
+    <ngx-skeleton-loader *ngIf="!formularioLoaded" count="8" [theme]="{ 'border-radius': '0', height: '50px' }"></ngx-skeleton-loader>
+
+    <div *ngIf="formularioLoaded" class="card border-0 my-1" id="{{pelicula.id}}">
+      <div class="card-body">
+        <div class="control-group">
+          <form [formGroup]="peliculaForm">
+            <div class="form-row mt-2">
+              <div class="form-group col">
+                <label class="h5" for="titulo">{{ 'movie.label.title' | translate }}</label>
+                <input id="titulo" type="text"class="form-control box-shadow-none border-bottom-only border-bottom-focus text-muted" formControlName="titulo"/>
+              </div>
             </div>
-            <div class="form-group col-md-6 col-lg-4">
-              <label class="text-muted" for="poster">{{ 'movie.label.poster' | translate }}</label>
-              <input type="text" class="form-control" formControlName="poster"/>
+            <div class="form-row mt-2">
+              <div class="form-group col">
+                <label class="h5" for="poster">{{ 'movie.label.poster' | translate }}</label>
+                <input type="text" class="form-control box-shadow-none border-bottom-only border-bottom-focus text-muted" formControlName="poster"/>
+              </div>
             </div>
-            <div class="form-group col-md-6 col-lg-4">
-              <label class="text-muted" for="generos">{{ 'movie.label.genres' | translate }}</label>
-              <input type="text" class="form-control" formControlName="generos"/>
+            <div class="form-row mt-2">
+              <div class="form-group col">
+                <label class="h5" for="generos">{{ 'movie.label.genres' | translate }}</label>
+                <tag-input [displayBy]="'nombre'"
+                          formControlName="generos"
+                          placeholder = "{{'movie.form.genre.placeholder' | translate }}"
+                          secondaryPlaceholder = "{{'movie.form.genre.placeholder' | translate }}"></tag-input>
+              </div>
             </div>
-          </div>
-          <div class="form-row">
-            <div class="form-group col-md-6 col-lg-4">
-              <label class="text-muted" for="actores">{{ 'movie.label.actors' | translate }}</label>
-              <select multiple name="actores" formControlName="actores">
-                <option *ngFor="let actor of actores" [ngValue]="actor.id">
-                  {{ actor.first_name }} {{actor.last_name}}
-                </option>
-              </select>
+            <div class="form-row mt-2">
+              <div class="form-group col">
+                <label class="h5" for="actores">{{ 'movie.label.actors' | translate }}</label>
+                <tag-input [identifyBy]="'id'"
+                          [displayBy]="'name'"
+                          formControlName="actores"
+                          placeholder = "{{'movie.form.actor.placeholder' | translate }}"
+                          secondaryPlaceholder = "{{'movie.form.actor.placeholder' | translate }}">
+                <tag-input-dropdown
+                    [appendToBody]="true"
+                    [showDropdownIfEmpty]="true"
+                    [autocompleteItems]="actores"
+                    [identifyBy]="'id'"
+                    [displayBy]="'name'">
+                </tag-input-dropdown>
+              </tag-input>
+              </div>
             </div>
-            <div class="form-group col-md-6 col-lg-4">
-              <label class="text-muted" for="estudio">{{ 'movie.label.studio' | translate }}</label>
-              <select name="estudio" formControlName="estudio">
-                <option *ngFor="let estudio of estudios" [ngValue]="estudio.id">
-                  {{ estudio.name }}
-                </option>
-              </select>
+            <div class="form-row mt-2">
+              <div class="form-group col">
+                <label class="h5" for="estudio">{{ 'movie.label.studio' | translate }}</label>
+                <select name="estudio" formControlName="estudio" class="text-muted form-select box-shadow-none border-bottom-only border-bottom-focus">
+                  <option *ngFor="let estudio of estudios" [ngValue]="estudio.id">
+                    {{ estudio.name }}
+                  </option>
+                </select>
+              </div>
             </div>
-            <div class="form-group col-md-6 col-lg-4">
-              <label class="text-muted" for="anio">{{ 'movie.label.year' | translate }}</label>
-              <select name="anio" formControlName="anio">
-                <option *ngFor="let anio of anios" [ngValue]="anio">
-                  {{ anio }}
-                </option>
-              </select>
+            <div class="form-row mt-2">
+              <div class="form-group col">
+                <label class="h5" for="anio">{{ 'movie.label.year' | translate }}</label>
+                <select name="anio" formControlName="anio" class="text-muted form-select box-shadow-none border-bottom-only border-bottom-focus">
+                  <option *ngFor="let anio of anios" [ngValue]="anio">
+                    {{ anio }}
+                  </option>
+                </select>
+              </div>
             </div>
-          </div>
-          <div class="form-row">
-            <div class="form-group col-md-6 col-lg-4">
-              <label class="text-muted" for="duracion">{{ 'movie.label.duration' | translate }}</label>
-              <input type="text" class="form-control" formControlName="duracion" />
+            <div class="form-row mt-2">
+              <div class="form-group col">
+                <label class="h5" for="duracion">{{ 'movie.label.duration' | translate }}</label>
+                <div class="input-group border-bottom-only border-bottom-focus">
+                  <input type="text" class="form-control border-0 box-shadow-none text-muted" formControlName="duracion" />
+                  <div class="d-flex flex-column">
+                    <i class="bi bi-chevron-up icon-14" (click)="incrementarDuracion()"></i>
+                    <i class="bi bi-chevron-down icon-14" (click)="decrementarDuracion()"></i>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div class="form-group col-md-6 col-lg-4">
-              <label class="text-muted" for="puntuacion">{{ 'movie.label.rating' | translate }}</label>
-              <input type="text" class="form-control" formControlName="puntuacion" />
+            <div class="form-row mt-2">
+              <div class="form-group col">
+                <label class="h5" for="puntuacion">{{ 'movie.label.rating' | translate }}</label>
+                <div class="input-group border-bottom-only border-bottom-focus">
+                  <input type="text" class="form-control border-0 box-shadow-none text-muted" formControlName="puntuacion" />
+                  <div class="d-flex flex-column mh-2">
+                    <i class="bi bi-chevron-up icon-14" (click)="incrementarPuntuacion()"></i>
+                    <i class="bi bi-chevron-down icon-14" (click)="decrementarPuntuacion()"></i>
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
-        </form>
+          </form>
+        </div>
       </div>
     </div>
+
   </div>
 
 </div>

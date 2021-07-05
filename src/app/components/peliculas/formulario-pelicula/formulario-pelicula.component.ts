@@ -22,6 +22,7 @@ export class FormularioPeliculaComponent implements OnInit {
   actores: Array<any> = new Array();
   estudios: Array<Estudio> = new Array();
   anios: Array<number> = new Array();
+  formularioLoaded: boolean = false;
   
   peliculaForm: FormGroup = this.formBuilder.group({
     titulo: '',
@@ -89,6 +90,7 @@ export class FormularioPeliculaComponent implements OnInit {
       if (id) {
         this.obtenerDatosPelicula(id);
       } else {
+        this.formularioLoaded = true;
         this.dataService?.ptMenu?.changeTitle(this.translateService.instant('movie.label.header'));
       }
     });
@@ -132,8 +134,33 @@ export class FormularioPeliculaComponent implements OnInit {
                 find(movie =>  movie == id))?.id
           );
         });
+        this.formularioLoaded = true;
       }
     );
+  }
+
+  incrementarDuracion(){
+    let duracion: number = this.peliculaForm.controls.duracion.value;
+    duracion++;
+    this.peliculaForm.controls.duracion.setValue(duracion);
+  }
+
+  decrementarDuracion(){
+    let duracion: number = this.peliculaForm.controls.duracion.value;
+    (duracion > 0) && duracion--;
+    this.peliculaForm.controls.duracion.setValue(duracion);
+  }
+
+  incrementarPuntuacion(){
+    let puntuacion: number = this.peliculaForm.controls.puntuacion.value;
+    (puntuacion < 10.00) && (puntuacion = puntuacion + 0.01);
+    this.peliculaForm.controls.puntuacion.setValue(puntuacion);
+  }
+
+  decrementarPuntuacion(){
+    let puntuacion: number = this.peliculaForm.controls.puntuacion.value;
+    (puntuacion > 0.00) && (puntuacion = puntuacion - 0.01);
+    this.peliculaForm.controls.puntuacion.setValue(puntuacion);
   }
 
 }
