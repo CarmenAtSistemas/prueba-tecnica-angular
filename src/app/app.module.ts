@@ -11,6 +11,7 @@ import { MainComponent, MenuComponent } from '../app/components';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HttpLoaderFactory, SharedModule } from './shared/shared.module';
+import { ToastrModule } from 'ngx-toastr';
 
 
 @NgModule({
@@ -28,6 +29,7 @@ import { HttpLoaderFactory, SharedModule } from './shared/shared.module';
     NgxSkeletonLoaderModule,
     RouterModule,
     SharedModule,
+    ToastrModule.forRoot(),
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
