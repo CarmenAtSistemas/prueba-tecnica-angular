@@ -5,6 +5,9 @@
     "movies": "Películas",
     "studios": "Estudios"
   },
+  "message": {
+    "error" : "Error"
+  },
   "movie": {
     "form": {
       "actor": {

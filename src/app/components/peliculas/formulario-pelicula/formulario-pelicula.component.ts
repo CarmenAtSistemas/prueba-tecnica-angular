@@ -3,13 +3,15 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Params } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { getAnios } from '@shared/functions/formulario-funciones';
-import { Actor, Estudio, Pelicula } from '@shared/models';
+import { Actor, Estudio, Message, Pelicula } from '@shared/models';
 import {
   ActorService,
+  DataService,
   EstudioService,
+  MessageService,
   PeliculaService
 } from '@shared/services';
-import { DataService } from '../../../shared/services/data/data.service';
+
 
 @Component({
   selector: 'pt-formulario-pelicula',
@@ -18,12 +20,12 @@ import { DataService } from '../../../shared/services/data/data.service';
 })
 
 export class FormularioPeliculaComponent implements OnInit {
-  
+
   actores: Array<any> = new Array();
   estudios: Array<Estudio> = new Array();
   anios: Array<number> = new Array();
   formularioLoaded: boolean = false;
-  
+
   peliculaForm: FormGroup = this.formBuilder.group({
     titulo: '',
     poster: '',
@@ -36,13 +38,14 @@ export class FormularioPeliculaComponent implements OnInit {
   });
 
   pelicula: Pelicula = new Pelicula();
-   
+
   constructor(
     private actorService: ActorService,
     private activatedRoute: ActivatedRoute,
     private dataService: DataService,
     private estudioService: EstudioService,
     private formBuilder: FormBuilder,
+    private messageService: MessageService,
     private peliculaService: PeliculaService,
     private translateService: TranslateService
   ) { }
@@ -53,7 +56,7 @@ export class FormularioPeliculaComponent implements OnInit {
     this.cargarDatosGenerales();
     this.cargarDatosPeliculaSeleccionada();
     this.dataService?.ptMenu?.changeShownMenuIcons(true);
- }
+  }
 
   inicializarFormulario() {
     this.peliculaForm = this.formBuilder.group({
@@ -68,11 +71,11 @@ export class FormularioPeliculaComponent implements OnInit {
     });
 
   }
-  
+
   cargarDatosGenerales() {
     this.actorService.getAllActores().subscribe((response: Actor[]) => {
       response.forEach((actor: Actor) => {
-        this.actores.push({id:actor.id, name: actor.first_name + ' ' + actor.last_name});
+        this.actores.push({ id: actor.id, name: actor.first_name + ' ' + actor.last_name });
       });
     });
 
@@ -81,7 +84,7 @@ export class FormularioPeliculaComponent implements OnInit {
     });
 
     this.anios = getAnios();
-  
+
   }
 
   cargarDatosPeliculaSeleccionada() {
@@ -97,7 +100,7 @@ export class FormularioPeliculaComponent implements OnInit {
   }
 
   obtenerDatosPelicula(id: number) {
-            
+
     this.peliculaService.getPeliculaById(id).subscribe(
       (response: Pelicula) => {
         this.pelicula = response;
@@ -113,14 +116,14 @@ export class FormularioPeliculaComponent implements OnInit {
         const actoresAux: Array<any> = new Array();
         this.actores.forEach(actor => {
           this.pelicula.actors?.forEach(a => {
-            if(actor.id == a) actoresAux.push(actor);
+            if (actor.id == a) actoresAux.push(actor);
           });
         })
 
         this.peliculaForm.controls.actores.setValue(
           actoresAux
         );
-        
+
         this.peliculaForm.controls.anio.setValue(this.pelicula.year);
         this.peliculaForm.controls.duracion.setValue(this.pelicula.duration);
         this.peliculaForm.controls.puntuacion.setValue(this.pelicula.imdbRating);
@@ -128,36 +131,39 @@ export class FormularioPeliculaComponent implements OnInit {
         this.estudioService.getAllEstudios().subscribe(
           (response: Array<Estudio>) => {
 
-          this.peliculaForm.controls.estudio.setValue(
-            response?.
-            find((estudio: Estudio) => estudio.movies?.
-                find(movie =>  movie == id))?.id
-          );
-        });
+            this.peliculaForm.controls.estudio.setValue(
+              response?.
+                find((estudio: Estudio) => estudio.movies?.
+                  find(movie => movie == id))?.id
+            );
+          });
         this.formularioLoaded = true;
+      },
+      (error: Message) => {
+        this.messageService.showError(error);
       }
     );
   }
 
-  incrementarDuracion(){
+  incrementarDuracion() {
     let duracion: number = this.peliculaForm.controls.duracion.value;
     duracion++;
     this.peliculaForm.controls.duracion.setValue(duracion);
   }
 
-  decrementarDuracion(){
+  decrementarDuracion() {
     let duracion: number = this.peliculaForm.controls.duracion.value;
     (duracion > 0) && duracion--;
     this.peliculaForm.controls.duracion.setValue(duracion);
   }
 
-  incrementarPuntuacion(){
+  incrementarPuntuacion() {
     let puntuacion: number = this.peliculaForm.controls.puntuacion.value;
     (puntuacion < 10.00) && (puntuacion = puntuacion + 0.01);
     this.peliculaForm.controls.puntuacion.setValue(puntuacion);
   }
 
-  decrementarPuntuacion(){
+  decrementarPuntuacion() {
     let puntuacion: number = this.peliculaForm.controls.puntuacion.value;
     (puntuacion > 0.00) && (puntuacion = puntuacion - 0.01);
     this.peliculaForm.controls.puntuacion.setValue(puntuacion);

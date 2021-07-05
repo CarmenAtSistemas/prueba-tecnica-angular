@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClient, HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { TranslateModule } from '@ngx-translate/core';
@@ -13,6 +13,7 @@ import {
 import { DuracionHorasMinutosPipe } from './pipes/duracion-horas-minutos.pipe';
 import { TagInputModule } from 'ngx-chips';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { HttpInterceptorHandler } from './interceptors/http-interceptor.handler';
 
 
 @NgModule({
@@ -26,7 +27,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
     NgbModule,
     NgxSkeletonLoaderModule,
     ReactiveFormsModule,
-    TagInputModule,
+    TagInputModule
   ],
   exports: [
     CommonModule,
@@ -38,7 +39,14 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
     ReactiveFormsModule,
     TagInputModule,
     TranslateModule,
-  ]
+  ],
+  providers: [
+    {
+        provide: HTTP_INTERCEPTORS,
+        useClass: HttpInterceptorHandler,
+        multi: true
+    }
+]
 })
 
 export class SharedModule {}

@@ -1,10 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { Pelicula } from '@shared/models/pelicula.model';
-import { DataService, PeliculaService } from '@shared/services';
-
-
+import { Message, Pelicula } from '@shared/models';
+import { DataService, MessageService, PeliculaService } from '@shared/services';
 
 @Component({
   selector: 'pt-listado-peliculas',
@@ -22,6 +20,7 @@ export class ListadoPeliculasComponent implements OnInit {
   constructor(
     private router: Router,
     private dataService: DataService,
+    private messageService: MessageService,
     private peliculaService: PeliculaService,
     private translateService: TranslateService
   ) { }
@@ -38,6 +37,9 @@ export class ListadoPeliculasComponent implements OnInit {
         this.listadoPeliculas = response;
       }
       this.listadoLoaded = true;
+    },
+    (error: Message) => {
+      this.messageService.showError(error);
     });
   }
 

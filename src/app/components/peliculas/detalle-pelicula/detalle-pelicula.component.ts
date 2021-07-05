@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Actor, Estudio, Pelicula } from '@shared/models';
-import { ActorService, EstudioService, PeliculaService } from '@shared/services';
-import { DataService } from '../../../shared/services/data/data.service';
+import { Actor, Estudio, Message, Pelicula } from '@shared/models';
+import { ActorService, DataService, EstudioService, MessageService, PeliculaService } from '@shared/services';
 
 @Component({
   selector: 'pt-detalle-pelicula',
@@ -29,15 +28,16 @@ export class DetallePeliculaComponent implements OnInit {
     private actorService: ActorService,
     private dataService: DataService,
     private estudioService: EstudioService,
+    private messageService: MessageService,
     private peliculaService: PeliculaService
-    ) { }
+  ) { }
 
   ngOnInit() {
 
     this.dataService?.ptMenu?.changeTitle('');
     this.recuperarDatosPelicula();
     this.dataService?.ptMenu?.changeShownMenuIcons(true);
-    
+
   }
 
   recuperarDatosPelicula() {
@@ -51,17 +51,20 @@ export class DetallePeliculaComponent implements OnInit {
             this.dataService.ptMenu.changeTitle(this.pelicula.title + ' (' + this.pelicula.year + ')');
             this.estudioService.getAllEstudios().subscribe(
               (response: Array<Estudio>) => {
-                this.estudio =  response?.find(
+                this.estudio = response?.find(
                   (estudio: Estudio) => estudio.movies?.
-                    find(movie=> movie == this.pelicula.id))?.name;
+                    find(movie => movie == this.pelicula.id))?.name;
                 this.estudioLoaded = true;
               });
-             this.pelicula.actors?.forEach((actorId: number) => {
-                this.actorService.getActorById(actorId).subscribe((actor: Actor) => {
+            this.pelicula.actors?.forEach((actorId: number) => {
+              this.actorService.getActorById(actorId).subscribe((actor: Actor) => {
                 this.actores.push(actor);
                 this.actoresLoaded = true;
               });
             });
+          },
+          (error: Message) => {
+            this.messageService.showError(error);
           });
       }
     });
