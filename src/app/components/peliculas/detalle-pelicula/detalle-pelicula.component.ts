@@ -19,6 +19,9 @@ export class DetallePeliculaComponent implements OnInit {
   actores: Array<Actor> = new Array();
   estudio: string | undefined;
 
+  peliculaLoaded: boolean = false;
+  actoresLoaded: boolean = false;
+  estudioLoaded: boolean = false;
 
   constructor(
     private router: Router,
@@ -29,9 +32,12 @@ export class DetallePeliculaComponent implements OnInit {
     private peliculaService: PeliculaService
     ) { }
 
-  ngOnInit(): void {
+  ngOnInit() {
 
+    this.dataService?.ptMenu?.changeTitle('');
     this.recuperarDatosPelicula();
+    this.dataService?.ptMenu?.changeShownMenuIcons(true);
+    
   }
 
   recuperarDatosPelicula() {
@@ -41,15 +47,19 @@ export class DetallePeliculaComponent implements OnInit {
         this.peliculaService.getPeliculaById(id).subscribe(
           (response: Pelicula) => {
             this.pelicula = response;
+            this.peliculaLoaded = true;
+            this.dataService.ptMenu.changeTitle(this.pelicula.title + ' (' + this.pelicula.year + ')');
             this.estudioService.getAllEstudios().subscribe(
               (response: Array<Estudio>) => {
                 this.estudio =  response?.find(
                   (estudio: Estudio) => estudio.movies?.
                     find(movie=> movie == this.pelicula.id))?.name;
+                this.estudioLoaded = true;
               });
              this.pelicula.actors?.forEach((actorId: number) => {
                 this.actorService.getActorById(actorId).subscribe((actor: Actor) => {
                 this.actores.push(actor);
+                this.actoresLoaded = true;
               });
             });
           });

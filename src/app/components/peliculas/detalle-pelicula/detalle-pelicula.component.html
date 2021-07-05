@@ -1,38 +1,66 @@
 <div class="margin-card">
-    <div class="card mb-3" id={{pelicula.id}}>
-        <img class="card-img-top" [src]='pelicula.poster' [alt]="pelicula.title">
-        <div class="card-body">
-            <div class="row">
-                <div class="col-6">
-                    <label>{{ 'movie.label.rating' | translate }} </label>
-                    <label>{{pelicula.imdbRating}}</label>
+    <div class="container">
+        <div class="card border-0 my-1" id={{pelicula.id}}>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 text-center">
+                        <div *ngIf="!peliculaLoaded" class="position-relative top-50">
+                            <ngx-skeleton-loader appearance="circle" animation="progress-dark" [theme]="{'border-radius':'0'}"></ngx-skeleton-loader>
+                        </div>
+                        <img *ngIf="peliculaLoaded" class="mw-100" [src]='pelicula.poster' [alt]="pelicula.title" onerror="this.src='http://dummyimage.com/400x600.png/dddddd/000000&text=not+avaliable+image';">
+                    </div>
+                    <div class="col-md-6 text-center">
+                        <div class="row mt-2">
+                            <div class="col-6 text-start">
+                                <h5>{{ 'movie.label.rating' | translate }} </h5>
+                                <ngx-skeleton-loader *ngIf="!peliculaLoaded" appearance="circle" count="3" animation="progress-dark" [theme]="{ width: '10px', height: '10px' }">
+                                </ngx-skeleton-loader>
+                                <span *ngIf="peliculaLoaded">{{pelicula.imdbRating}}</span>
+                            </div>
+                            <div class="col-6 text-end">
+                                <h5>{{ 'movie.label.duration' | translate }}</h5>
+                                <ngx-skeleton-loader *ngIf="!peliculaLoaded" appearance="circle" count="3" animation="progress-dark" [theme]="{ width: '10px', height: '10px' }">
+                                </ngx-skeleton-loader>
+                                <span *ngIf="peliculaLoaded">{{pelicula.duration | duracion_horas_minutos}}</span>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col text-start">
+                                <h5 class="border-bottom border-2">{{ 'movie.label.actors' | translate }}</h5>
+                                <ngx-skeleton-loader *ngIf="!actoresLoaded" appearance="circle" count="3" animation="progress-dark" [theme]="{ width: '10px', height: '10px' }">
+                                </ngx-skeleton-loader>
+                                <dl *ngIf="actoresLoaded">
+                                    <dd *ngFor="let actor of actores">
+                                        <span class="text-muted" >
+                                            {{actor.first_name + ' ' + actor.last_name}}
+                                        </span>
+                                    </dd>
+                                </dl>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col text-start">
+                                <h5 class="border-bottom border-2">{{ 'movie.label.studio' | translate }}</h5>
+                                <ngx-skeleton-loader *ngIf="!estudioLoaded" appearance="circle" count="3" animation="progress-dark" [theme]="{ width: '10px', height: '10px' }">
+                                </ngx-skeleton-loader>
+                                <span *ngIf="estudioLoaded" class="text-muted">{{ estudio }} </span>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col text-start">
+                                <h5 class="border-bottom border-2">{{ 'movie.label.genres' | translate }}</h5>
+                                <ngx-skeleton-loader *ngIf="!peliculaLoaded" appearance="circle" count="3" animation="progress-dark" [theme]="{ width: '10px', height: '10px' }">
+                                </ngx-skeleton-loader>
+                                <div *ngIf="peliculaLoaded" class="d-flex justify-content-between">
+                                    <span *ngFor="let genero of pelicula.genre">
+                                        #{{genero}}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-6">
-                    <label>{{ 'movie.label.duration' | translate }}</label>
-                    <label>{{pelicula.duration | duracion_horas_minutos}}</label>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-6">
-                    <label>{{ 'movie.label.actors' | translate }}</label>
-                    <label *ngFor="let actor of actores">
-                        {{actor.first_name + ' ' + actor.last_name}}
-                    </label>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-12">
-                    <label>{{ 'movie.label.studio' | translate }}</label>
-                    <label>{{ estudio }} </label>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-12">
-                    <label>{{ 'movie.label.genres' | translate }}</label>
-                    <label *ngFor="let genero of pelicula.genre">
-                        #{{genero}}
-                    </label>
-                </div>
+                
             </div>
         </div>
 
