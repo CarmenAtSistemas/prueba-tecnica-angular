@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Pelicula } from '../../../shared/models/pelicula.model';
 import { TranslateService } from '@ngx-translate/core';
+import { Pelicula } from '@shared/models/pelicula.model';
 import { DataService, PeliculaService } from '@shared/services';
+
+
 
 @Component({
   selector: 'pt-listado-peliculas',
@@ -18,8 +20,8 @@ export class ListadoPeliculasComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private peliculaService: PeliculaService,
     private dataService: DataService,
+    private peliculaService: PeliculaService,
     private translateService: TranslateService
   ) { }
 
@@ -29,11 +31,10 @@ export class ListadoPeliculasComponent implements OnInit {
     this.dataService?.ptMenu?.changeTitle(this.translateService.instant('menu.movies'));
   }
 
-
   recuperarPeliculas() {
-    this.peliculaService.getAllPeliculas().subscribe((res: Array<Pelicula>) => {
-      if (res) {
-        this.listadoPeliculas = res;
+    this.peliculaService.getAllPeliculas().subscribe((response: Array<Pelicula>) => {
+      if (response) {
+        this.listadoPeliculas = response;
       }
     });
   }

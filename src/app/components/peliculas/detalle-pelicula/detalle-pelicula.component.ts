@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { Actor, Pelicula, Estudio } from '@shared/models';
-import { Router, ActivatedRoute } from '@angular/router';
-import { PeliculaService, ActorService, EstudioService } from '@shared/services';
-import { __core_private_testing_placeholder__ } from '@angular/core/testing';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Actor, Estudio, Pelicula } from '@shared/models';
+import { ActorService, EstudioService, PeliculaService } from '@shared/services';
+import { DataService } from '../../../shared/services/data/data.service';
 
 @Component({
   selector: 'pt-detalle-pelicula',
@@ -11,7 +11,9 @@ import { __core_private_testing_placeholder__ } from '@angular/core/testing';
 })
 export class DetallePeliculaComponent implements OnInit {
 
-  url: string = '/peliculas/editar/';
+  urlBase: string = '/peliculas/';
+  urlEditar: string = 'editar/';
+  urlDetale: string = 'detalle/'
 
   pelicula: Pelicula = new Pelicula();
   actores: Array<Actor> = new Array();
@@ -21,9 +23,11 @@ export class DetallePeliculaComponent implements OnInit {
   constructor(
     private router: Router,
     private activatedRoute: ActivatedRoute,
-    private peliculaService: PeliculaService,
+    private actorService: ActorService,
+    private dataService: DataService,
     private estudioService: EstudioService,
-    private actorService: ActorService) { }
+    private peliculaService: PeliculaService
+    ) { }
 
   ngOnInit(): void {
 
@@ -54,7 +58,9 @@ export class DetallePeliculaComponent implements OnInit {
   }
 
   editar(item: Pelicula) {
-    this.router.navigate([this.url + item.id]);
+
+    this.router.navigate([this.urlBase + this.urlEditar + item.id]);
+  }
   }
 
 }

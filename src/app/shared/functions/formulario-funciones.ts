@@ -8,12 +8,3 @@ export function getAnios() {
     }
     return anios;
 }
-
-export function getPuntuaciones() {
-
-    const puntuaciones: Array<number> = new Array();
-    for(let i=0; i<=100; i++){
-        puntuaciones.push(i/10);
-    }
-    return puntuaciones;
-}

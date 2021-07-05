@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { Actor, Estudio, Pelicula } from '@shared/models';
-import { getAnios } from '@shared/functions/formulario-funciones';
 import { ActivatedRoute, Params } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
+import { getAnios } from '@shared/functions/formulario-funciones';
+import { Actor, Estudio, Pelicula } from '@shared/models';
 import {
   ActorService,
   EstudioService,
@@ -19,20 +19,19 @@ import { DataService } from '../../../shared/services/data/data.service';
 
 export class FormularioPeliculaComponent implements OnInit {
   
-  actores: Array<Actor> = new Array();
+  actores: Array<any> = new Array();
   estudios: Array<Estudio> = new Array();
   anios: Array<number> = new Array();
-  puntuaciones: Array<number> = new Array();
   
   peliculaForm: FormGroup = this.formBuilder.group({
     titulo: '',
     poster: '',
-    generos: [],
-    actores: [],
+    generos: '',
+    actores: '',
     estudio: '',
-    anio: '',
-    duracion: '',
-    puntuacion: ''
+    anio: new Date(),
+    duracion: 0,
+    puntuacion: 0
   });
 
   pelicula: Pelicula = new Pelicula();
@@ -48,6 +47,7 @@ export class FormularioPeliculaComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+
     this.inicializarFormulario();
     this.cargarDatosGenerales();
     this.cargarDatosPeliculaSeleccionada();
@@ -58,19 +58,21 @@ export class FormularioPeliculaComponent implements OnInit {
     this.peliculaForm = this.formBuilder.group({
       titulo: '',
       poster: '',
-      generos: [],
-      actores: [],
+      generos: '',
+      actores: '',
       estudio: '',
-      anio: '',
-      duracion: '',
-      puntuacion: ''
+      anio: new Date(),
+      duracion: 0,
+      puntuacion: 0
     });
 
   }
   
   cargarDatosGenerales() {
     this.actorService.getAllActores().subscribe((response: Actor[]) => {
-      this.actores = response;
+      response.forEach((actor: Actor) => {
+        this.actores.push({id:actor.id, name: actor.first_name + ' ' + actor.last_name});
+      });
     });
 
     this.estudioService.getAllEstudios().subscribe((response: Estudio[]) => {
@@ -106,8 +108,15 @@ export class FormularioPeliculaComponent implements OnInit {
           this.pelicula.genre
         );
 
+        const actoresAux: Array<any> = new Array();
+        this.actores.forEach(actor => {
+          this.pelicula.actors?.forEach(a => {
+            if(actor.id == a) actoresAux.push(actor);
+          });
+        })
+
         this.peliculaForm.controls.actores.setValue(
-          this.pelicula.actors
+          actoresAux
         );
         
         this.peliculaForm.controls.anio.setValue(this.pelicula.year);
