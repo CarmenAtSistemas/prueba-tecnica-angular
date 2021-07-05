@@ -17,6 +17,7 @@ export class ListadoPeliculasComponent implements OnInit {
   urlBase: string = '/peliculas/';
   urlDetalle: string = 'detalle/';
   urlFormulario: string = 'nueva';
+  listadoLoaded: boolean = false;
 
   constructor(
     private router: Router,
@@ -36,11 +37,11 @@ export class ListadoPeliculasComponent implements OnInit {
       if (response) {
         this.listadoPeliculas = response;
       }
+      this.listadoLoaded = true;
     });
   }
 
   verDetalle(item: Pelicula) {
-    console.log('verDetalle');
     this.router.navigate([this.urlBase + this.urlDetalle + item.id]);
   }
 
