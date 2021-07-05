@@ -1,19 +1,29 @@
 <div class="margin-card">
 
+  <div *ngIf="!listadoLoaded" class="position-fixed top-50 w-100 text-center">
+    <ngx-skeleton-loader  count="3" appearance="circle" animation="progress-dark"></ngx-skeleton-loader>
+  </div>
+  
   <div class="container">
+    
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-2 my-1">
 
-    <div class="row" *ngFor="let pelicula of listadoPeliculas">
+      <div class="col" *ngFor="let pelicula of listadoPeliculas">
+       
+        <div role="button" class="card h-100 " id={{pelicula.id}} (click)="verDetalle(pelicula)">
+          <div class="card-header text-center text-truncate">
+            <span class="text-center ">{{pelicula.title}}</span>
+          </div>
+          <img class="card-img" onerror="this.src='http://dummyimage.com/400x600.png/dddddd/000000&text=not+avaliable+image';" [src]="pelicula.poster" [alt]="pelicula.title">
+          <div class="card-body">
+            <p class="card-text" >
+              <span *ngFor="let tag of pelicula.genre">
+                #{{tag}}
+              </span>
+            </p>
+          </div>
+        </div>
 
-      <div class="card" id={{pelicula.id}} (click)="verDetalle(pelicula)">
-        <div class="card-header text-center">
-          <span class="text-center">{{pelicula.title}}</span>
-        </div>
-        <img class="card-img" [src]='pelicula.poster' [alt]="pelicula.title">
-        <div class="card-body">
-          <span *ngFor="let tag of pelicula.genre">
-            #{{tag}}
-          </span>
-        </div>
       </div>
 
     </div>
