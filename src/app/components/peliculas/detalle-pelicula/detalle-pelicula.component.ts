@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Actor, Estudio, Message, Pelicula } from '@shared/models';
 import { ActorService, DataService, EstudioService, MessageService, PeliculaService } from '@shared/services';
+import { concatMap,  } from 'rxjs/operators';
+import { Observable, forkJoin, from } from 'rxjs';
 
 @Component({
   selector: 'pt-detalle-pelicula',
@@ -35,7 +37,8 @@ export class DetallePeliculaComponent implements OnInit {
   ngOnInit() {
 
     this.dataService?.ptMenu?.changeTitle('');
-    this.recuperarDatosPelicula();
+    // this.recuperarDatosPelicula();
+    this.cargaDatosPrueba();
     this.dataService?.ptMenu?.changeShownMenuIcons(true);
 
   }
@@ -68,6 +71,66 @@ export class DetallePeliculaComponent implements OnInit {
           });
       }
     });
+  }
+
+  cargaDatosPrueba(){
+
+    const datosDetalles = {
+      pelicula: Pelicula,
+      actores: Array,
+      estudio: Estudio,
+    };
+
+    const recuperarActores = (pelicula: Pelicula) => {
+      pelicula.actors?.forEach((actorId: number) => {
+        this.actorService.getActorById(actorId).subscribe((actor: Actor) => {
+          this.actores.push(actor);
+        });
+      });
+    }
+    
+    this.activatedRoute.params.subscribe((params) => {
+
+      const id = params.id;
+      this.peliculaService.getPeliculaById(id)
+        .pipe(
+          concatMap((pelicula) => recuperarActores(pelicula))
+        .subscribe(
+          (response: Pelicula) => {
+            this.pelicula = response;
+            console.log('susbcripcion película');
+            console.log(params);
+            this.peliculaLoaded = true;
+            this.dataService.ptMenu.changeTitle(this.pelicula.title + ' (' + this.pelicula.year + ')');
+          }
+        );      
+    },(error: Message) => {
+      this.messageService.showError(error);
+    });
+    
+    .pipe(
+      concatMap((params) => {
+        const id = params.id;
+        return this.peliculaService.getPeliculaById(id).subscribe(
+          (response: Pelicula) => {
+            this.pelicula = response;
+          }
+        );
+      }),
+      forkJoin(
+        async (pelicula : Pelicula) => {
+          this.pelicula = pelicula
+          return pelicula.actors?.
+              forEach((actorId: number) => {
+                this.actorService.getActorById(actorId).subscribe((actor: Actor) => {
+                  this.actores.push(actor);
+                });
+              });
+        } 
+      ),
+
+    )   
+
   }
 
   editar(item: Pelicula) {
