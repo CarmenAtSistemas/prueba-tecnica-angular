@@ -7,7 +7,7 @@
                         <div *ngIf="!peliculaLoaded" class="position-relative top-50">
                             <ngx-skeleton-loader appearance="circle" animation="progress-dark" [theme]="{'border-radius':'0'}"></ngx-skeleton-loader>
                         </div>
-                        <img *ngIf="peliculaLoaded" class="mw-100" [src]='pelicula.poster' [alt]="pelicula.title" onerror="this.src='http://dummyimage.com/400x600.png/dddddd/000000&text=not+avaliable+image';">
+                        <img failedImage *ngIf="peliculaLoaded" class="mw-100" [src]='pelicula.poster' [alt]="pelicula.title">
                     </div>
                     <div class="col-md-6 text-center">
                         <div class="row mt-2">

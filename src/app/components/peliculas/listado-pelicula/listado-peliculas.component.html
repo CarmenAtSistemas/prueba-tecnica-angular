@@ -14,7 +14,7 @@
           <div class="card-header text-center text-truncate">
             <span class="text-center ">{{pelicula.title}}</span>
           </div>
-          <img class="card-img" onerror="this.src='http://dummyimage.com/400x600.png/dddddd/000000&text=not+avaliable+image';" [src]="pelicula.poster" [alt]="pelicula.title">
+          <img failedImage class="card-img" [src]="pelicula.poster" [alt]="pelicula.title">
           <div class="card-body">
             <p class="card-text" >
               <span *ngFor="let tag of pelicula.genre">
