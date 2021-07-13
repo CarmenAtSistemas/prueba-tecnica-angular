@@ -82,7 +82,6 @@ export class DetallePeliculaComponent implements OnInit {
       },
       (error: Message) => {
         this.messageService.showError(error);
-        // this.pelicula = new Pelicula();
         this.peliculaLoaded = true;
       }
     );
