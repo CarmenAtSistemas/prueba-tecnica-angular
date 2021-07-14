@@ -7,5 +7,5 @@ export class Estudio {
     createYear?: number[];
     employees?: number;
     rating?: number;
-    movies?: Array<Pelicula>;
+    movies: Array<number> = new Array();
   }

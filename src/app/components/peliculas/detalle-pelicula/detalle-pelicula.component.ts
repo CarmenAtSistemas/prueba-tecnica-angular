@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Actor, Estudio, Message, Pelicula } from '@shared/models';
 import { ActorService, DataService, EstudioService, MessageService, PeliculaService } from '@shared/services';
+import { forkJoin, Observable, of } from 'rxjs';
+import { concatMap } from 'rxjs/operators';
 
 @Component({
   selector: 'pt-detalle-pelicula',
@@ -14,13 +16,11 @@ export class DetallePeliculaComponent implements OnInit {
   urlEditar: string = 'editar/';
   urlDetale: string = 'detalle/'
 
-  pelicula: Pelicula = new Pelicula();
-  actores: Array<Actor> = new Array();
-  estudio: string | undefined;
+  pelicula!: Pelicula;
+  actores!: Array<Actor>;
+  estudio!: string;
 
   peliculaLoaded: boolean = false;
-  actoresLoaded: boolean = false;
-  estudioLoaded: boolean = false;
 
   constructor(
     private router: Router,
@@ -34,6 +34,9 @@ export class DetallePeliculaComponent implements OnInit {
 
   ngOnInit() {
 
+    this.pelicula = new Pelicula();
+    this.actores = new Array<Actor>();
+    this.estudio = '';
     this.dataService?.ptMenu?.changeTitle('');
     this.recuperarDatosPelicula();
     this.dataService?.ptMenu?.changeShownMenuIcons(true);
@@ -41,33 +44,47 @@ export class DetallePeliculaComponent implements OnInit {
   }
 
   recuperarDatosPelicula() {
-    this.activatedRoute.params.subscribe(params => {
-      const id = params.id;
-      if (id) {
-        this.peliculaService.getPeliculaById(id).subscribe(
-          (response: Pelicula) => {
-            this.pelicula = response;
-            this.peliculaLoaded = true;
-            this.dataService.ptMenu.changeTitle(this.pelicula.title + ' (' + this.pelicula.year + ')');
-            this.estudioService.getAllEstudios().subscribe(
-              (response: Array<Estudio>) => {
-                this.estudio = response?.find(
-                  (estudio: Estudio) => estudio.movies?.
-                    find(movie => movie == this.pelicula.id))?.name;
-                this.estudioLoaded = true;
-              });
-            this.pelicula.actors?.forEach((actorId: number) => {
-              this.actorService.getActorById(actorId).subscribe((actor: Actor) => {
-                this.actores.push(actor);
-                this.actoresLoaded = true;
-              });
-            });
-          },
-          (error: Message) => {
-            this.messageService.showError(error);
-          });
+        
+    this.activatedRoute.params
+    .pipe(
+      concatMap(params => 
+        {
+          console.log('concatMap1');
+          return this.peliculaService.getPeliculaById(params.id);
+        }
+      ),
+      concatMap(pelicula => 
+        {
+        console.log('concatMap2');
+        let observables: Observable<any>[] = [];
+        observables.push(of(pelicula));
+        observables.push(this.estudioService.getAllEstudios());
+        pelicula.actors?.forEach(
+          (actorId: number) => observables.push(this.actorService.getActorById(actorId))
+        );
+        return forkJoin(observables);
+        }
+      )
+    )
+    .subscribe(result => 
+      { 
+        console.log('subscripcion');
+        
+        this.pelicula = result[0];
+
+        this.estudio = result[1].find(
+          (estudio: Estudio) => estudio.movies?.
+            find(movie => movie == this.pelicula.id))?.name!;
+
+        this.actores = result.slice(2);
+
+        this.peliculaLoaded = true;
+      },
+      (error: Message) => {
+        this.messageService.showError(error);
+        this.peliculaLoaded = true;
       }
-    });
+    );
   }
 
   editar(item: Pelicula) {

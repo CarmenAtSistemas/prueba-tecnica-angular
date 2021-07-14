@@ -27,9 +27,9 @@
                         <div class="row mt-2">
                             <div class="col text-start">
                                 <h5 class="border-bottom border-2">{{ 'movie.label.actors' | translate }}</h5>
-                                <ngx-skeleton-loader *ngIf="!actoresLoaded" appearance="circle" count="3" animation="progress-dark" [theme]="{ width: '10px', height: '10px' }">
+                                <ngx-skeleton-loader *ngIf="!peliculaLoaded" appearance="circle" count="3" animation="progress-dark" [theme]="{ width: '10px', height: '10px' }">
                                 </ngx-skeleton-loader>
-                                <dl *ngIf="actoresLoaded">
+                                <dl *ngIf="peliculaLoaded">
                                     <dd *ngFor="let actor of actores">
                                         <span class="text-muted" >
                                             {{actor.first_name + ' ' + actor.last_name}}
@@ -41,9 +41,9 @@
                         <div class="row">
                             <div class="col text-start">
                                 <h5 class="border-bottom border-2">{{ 'movie.label.studio' | translate }}</h5>
-                                <ngx-skeleton-loader *ngIf="!estudioLoaded" appearance="circle" count="3" animation="progress-dark" [theme]="{ width: '10px', height: '10px' }">
+                                <ngx-skeleton-loader *ngIf="!peliculaLoaded" appearance="circle" count="3" animation="progress-dark" [theme]="{ width: '10px', height: '10px' }">
                                 </ngx-skeleton-loader>
-                                <span *ngIf="estudioLoaded" class="text-muted">{{ estudio }} </span>
+                                <span *ngIf="peliculaLoaded" class="text-muted">{{ estudio }} </span>
                             </div>
                         </div>
                         <div class="row mt-2">

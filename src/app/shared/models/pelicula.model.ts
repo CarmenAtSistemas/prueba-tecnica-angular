@@ -8,5 +8,5 @@ export class Pelicula {
     year?: number;
     duration?: number;
     imdbRating?: number;
-    actors?: Array<number>;
+    actors: Array<number> = new Array();
   }

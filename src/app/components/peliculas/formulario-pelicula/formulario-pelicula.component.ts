@@ -11,6 +11,8 @@ import {
   MessageService,
   PeliculaService
 } from '@shared/services';
+import { forkJoin, Observable, of } from 'rxjs';
+import { concatMap, map } from 'rxjs/operators';
 
 
 @Component({
@@ -34,7 +36,7 @@ export class FormularioPeliculaComponent implements OnInit {
     estudio: '',
     anio: new Date(),
     duracion: 0,
-    puntuacion: 0
+    puntuacion: 0.00
   });
 
   pelicula: Pelicula = new Pelicula();
@@ -53,8 +55,7 @@ export class FormularioPeliculaComponent implements OnInit {
   ngOnInit() {
 
     this.inicializarFormulario();
-    this.cargarDatosGenerales();
-    this.cargarDatosPeliculaSeleccionada();
+    this.cargarDatosFormulario();
     this.dataService?.ptMenu?.changeShownMenuIcons(true);
   }
 
@@ -67,39 +68,47 @@ export class FormularioPeliculaComponent implements OnInit {
       estudio: '',
       anio: new Date(),
       duracion: 0,
-      puntuacion: 0
+      puntuacion: 0.00
     });
 
   }
 
-  cargarDatosGenerales() {
-    this.actorService.getAllActores().subscribe((response: Actor[]) => {
-      response.forEach((actor: Actor) => {
-        this.actores.push({ id: actor.id, name: actor.first_name + ' ' + actor.last_name });
-      });
-    });
+  cargarDatosFormulario(){
 
-    this.estudioService.getAllEstudios().subscribe((response: Estudio[]) => {
-      this.estudios = response;
-    });
-
-    this.anios = getAnios();
-
-  }
-
-  cargarDatosPeliculaSeleccionada() {
-    this.activatedRoute.params.subscribe((params: Params) => {
-      const id = params.id;
-      if (id) {
-        this.obtenerDatosPelicula(id);
-      } else {
+    forkJoin([this.actorService.getAllActores(), this.estudioService.getAllEstudios()])
+    .pipe(
+      concatMap((result) => 
+        {
+          result[0].forEach((actor: Actor) => {
+            this.actores.push({ id: actor.id, name: actor.first_name + ' ' + actor.last_name });
+          });
+  
+          this.estudios = result[1]
+          this.anios = getAnios();
+          
+          return this.activatedRoute.params;
+        }
+      )
+    )
+    .subscribe((params: Params) => 
+      {
+        const id = params.id;
+        if (id) {
+          this.cargarDatosPelicula(id);
+        } else {
+          this.dataService?.ptMenu?.changeTitle(this.translateService.instant('movie.label.header'));
+          this.formularioLoaded = true;
+        }
+          
+      },(error: Message) => {
+        this.messageService.showError(error);
         this.formularioLoaded = true;
-        this.dataService?.ptMenu?.changeTitle(this.translateService.instant('movie.label.header'));
       }
-    });
+    );
+
   }
 
-  obtenerDatosPelicula(id: number) {
+  cargarDatosPelicula(id: number) {
 
     this.peliculaService.getPeliculaById(id).subscribe(
       (response: Pelicula) => {
@@ -127,46 +136,44 @@ export class FormularioPeliculaComponent implements OnInit {
         this.peliculaForm.controls.anio.setValue(this.pelicula.year);
         this.peliculaForm.controls.duracion.setValue(this.pelicula.duration);
         this.peliculaForm.controls.puntuacion.setValue(this.pelicula.imdbRating);
+        
+        this.peliculaForm.controls.estudio.setValue(
+          this.estudios.
+            find((estudio: Estudio) => estudio.movies?.
+              find(movie => movie == id))?.id
+        );
 
-        this.estudioService.getAllEstudios().subscribe(
-          (response: Array<Estudio>) => {
-
-            this.peliculaForm.controls.estudio.setValue(
-              response?.
-                find((estudio: Estudio) => estudio.movies?.
-                  find(movie => movie == id))?.id
-            );
-          });
         this.formularioLoaded = true;
       },
       (error: Message) => {
         this.messageService.showError(error);
+        this.formularioLoaded = true;
       }
     );
   }
 
   incrementarDuracion() {
-    let duracion: number = this.peliculaForm.controls.duracion.value;
+    let duracion: number =  1 * this.peliculaForm.controls.duracion.value;
     duracion++;
     this.peliculaForm.controls.duracion.setValue(duracion);
   }
 
   decrementarDuracion() {
-    let duracion: number = this.peliculaForm.controls.duracion.value;
+    let duracion: number = 1 * this.peliculaForm.controls.duracion.value;
     (duracion > 0) && duracion--;
     this.peliculaForm.controls.duracion.setValue(duracion);
   }
 
   incrementarPuntuacion() {
-    let puntuacion: number = this.peliculaForm.controls.puntuacion.value;
-    (puntuacion < 10.00) && (puntuacion = puntuacion + 0.01);
-    this.peliculaForm.controls.puntuacion.setValue(puntuacion);
+    let puntuacion: number = 1 * this.peliculaForm.controls.puntuacion.value;
+    (puntuacion < 10.00) && (puntuacion = puntuacion +  0.01);
+    this.peliculaForm.controls.puntuacion.setValue(puntuacion.toFixed(2));
   }
 
   decrementarPuntuacion() {
-    let puntuacion: number = this.peliculaForm.controls.puntuacion.value;
+    let puntuacion: number = 1 * this.peliculaForm.controls.puntuacion.value;
     (puntuacion > 0.00) && (puntuacion = puntuacion - 0.01);
-    this.peliculaForm.controls.puntuacion.setValue(puntuacion);
+    this.peliculaForm.controls.puntuacion.setValue(puntuacion.toFixed(2));
   }
 
 }
