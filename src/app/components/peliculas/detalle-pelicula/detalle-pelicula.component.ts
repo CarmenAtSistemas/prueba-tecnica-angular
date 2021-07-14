@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Actor, Estudio, Message, Pelicula } from '@shared/models';
+import { Actor, Message, Pelicula } from '@shared/models';
 import { ActorService, DataService, EstudioService, MessageService, PeliculaService } from '@shared/services';
-import { forkJoin, Observable, of } from 'rxjs';
-import { concatMap } from 'rxjs/operators';
+import { forkJoin, of } from 'rxjs';
+import { concatMap, map } from 'rxjs/operators';
 
 @Component({
   selector: 'pt-detalle-pelicula',
@@ -44,41 +44,23 @@ export class DetallePeliculaComponent implements OnInit {
   }
 
   recuperarDatosPelicula() {
-        
-    this.activatedRoute.params
-    .pipe(
-      concatMap(params => 
-        {
-          console.log('concatMap1');
-          return this.peliculaService.getPeliculaById(params.id);
-        }
-      ),
-      concatMap(pelicula => 
-        {
-        console.log('concatMap2');
-        let observables: Observable<any>[] = [];
-        observables.push(of(pelicula));
-        observables.push(this.estudioService.getAllEstudios());
-        pelicula.actors?.forEach(
-          (actorId: number) => observables.push(this.actorService.getActorById(actorId))
-        );
-        return forkJoin(observables);
-        }
-      )
-    )
-    .subscribe(result => 
-      { 
-        console.log('subscripcion');
-        
-        this.pelicula = result[0];
+    const id = this.activatedRoute.snapshot.paramMap.get('id') as string;
 
-        this.estudio = result[1].find(
-          (estudio: Estudio) => estudio.movies?.
-            find(movie => movie == this.pelicula.id))?.name!;
+    this.peliculaService.getPeliculaById(Number(id)).pipe(
+      concatMap(pelicula => forkJoin({
+        pelicula: of(pelicula),
+        estudio: this.estudioService.getAllEstudios().pipe(
+          map(estudios => estudios.find(({ movies }) => movies.some(id => id === pelicula.id)))
+          ),
+        actores: forkJoin(pelicula.actors.map(actorId => this.actorService.getActorById(actorId)))
+      }))
+    ).subscribe(({ pelicula, estudio, actores }) => {
+      
+      this.pelicula = pelicula;
+      this.estudio = estudio!.name!;
+      this.actores = actores;
+      this.peliculaLoaded = true;
 
-        this.actores = result.slice(2);
-
-        this.peliculaLoaded = true;
       },
       (error: Message) => {
         this.messageService.showError(error);

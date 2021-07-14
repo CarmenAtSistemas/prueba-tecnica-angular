@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Params } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { getAnios } from '@shared/functions/formulario-funciones';
-import { Actor, Estudio, Message, Pelicula } from '@shared/models';
+import { Estudio, Message, Pelicula } from '@shared/models';
 import {
   ActorService,
   DataService,
@@ -11,8 +11,8 @@ import {
   MessageService,
   PeliculaService
 } from '@shared/services';
-import { forkJoin, Observable, of } from 'rxjs';
-import { concatMap, map } from 'rxjs/operators';
+import { forkJoin } from 'rxjs';
+import { concatMap } from 'rxjs/operators';
 
 
 @Component({
@@ -75,15 +75,16 @@ export class FormularioPeliculaComponent implements OnInit {
 
   cargarDatosFormulario(){
 
-    forkJoin([this.actorService.getAllActores(), this.estudioService.getAllEstudios()])
+
+    forkJoin({
+      actores : this.actorService.getAllActores(),
+      estudios: this.estudioService.getAllEstudios()}
+    )
     .pipe(
-      concatMap((result) => 
+      concatMap(({actores, estudios}) => 
         {
-          result[0].forEach((actor: Actor) => {
-            this.actores.push({ id: actor.id, name: actor.first_name + ' ' + actor.last_name });
-          });
-  
-          this.estudios = result[1]
+          this.actores = actores.map((actor) => { return { id: actor.id, name: actor.first_name + ' ' + actor.last_name }});
+          this.estudios = estudios;
           this.anios = getAnios();
           
           return this.activatedRoute.params;
@@ -110,9 +111,9 @@ export class FormularioPeliculaComponent implements OnInit {
 
   cargarDatosPelicula(id: number) {
 
-    this.peliculaService.getPeliculaById(id).subscribe(
-      (response: Pelicula) => {
-        this.pelicula = response;
+    this.peliculaService.getPeliculaById(id)
+    .subscribe((pelicula: Pelicula) => {
+        this.pelicula = pelicula;
         this.dataService?.ptMenu?.changeTitle(this.pelicula.title + ' (' + this.pelicula.year + ')');
         this.peliculaForm.controls.titulo.setValue(this.pelicula.title);
         this.peliculaForm.controls.poster.setValue(
@@ -121,28 +122,21 @@ export class FormularioPeliculaComponent implements OnInit {
         this.peliculaForm.controls.generos.setValue(
           this.pelicula.genre
         );
-
-        const actoresAux: Array<any> = new Array();
-        this.actores.forEach(actor => {
-          this.pelicula.actors?.forEach(a => {
-            if (actor.id == a) actoresAux.push(actor);
-          });
-        })
-
+       
         this.peliculaForm.controls.actores.setValue(
-          actoresAux
+          this.actores.filter(({id}) => this.pelicula.actors.some(actorId => actorId == id ))
+        );
+
+        this.peliculaForm.controls.estudio.setValue(
+          this.estudios.
+            find(({ movies}) => movies.
+              some(movie => movie == pelicula.id))?.id
         );
 
         this.peliculaForm.controls.anio.setValue(this.pelicula.year);
         this.peliculaForm.controls.duracion.setValue(this.pelicula.duration);
         this.peliculaForm.controls.puntuacion.setValue(this.pelicula.imdbRating);
         
-        this.peliculaForm.controls.estudio.setValue(
-          this.estudios.
-            find((estudio: Estudio) => estudio.movies?.
-              find(movie => movie == id))?.id
-        );
-
         this.formularioLoaded = true;
       },
       (error: Message) => {
@@ -153,25 +147,25 @@ export class FormularioPeliculaComponent implements OnInit {
   }
 
   incrementarDuracion() {
-    let duracion: number =  1 * this.peliculaForm.controls.duracion.value;
+    let duracion: number =  Number(this.peliculaForm.controls.duracion.value);
     duracion++;
     this.peliculaForm.controls.duracion.setValue(duracion);
   }
 
   decrementarDuracion() {
-    let duracion: number = 1 * this.peliculaForm.controls.duracion.value;
+    let duracion: number = Number(this.peliculaForm.controls.duracion.value);
     (duracion > 0) && duracion--;
     this.peliculaForm.controls.duracion.setValue(duracion);
   }
 
   incrementarPuntuacion() {
-    let puntuacion: number = 1 * this.peliculaForm.controls.puntuacion.value;
+    let puntuacion: number = Number(this.peliculaForm.controls.puntuacion.value);
     (puntuacion < 10.00) && (puntuacion = puntuacion +  0.01);
     this.peliculaForm.controls.puntuacion.setValue(puntuacion.toFixed(2));
   }
 
   decrementarPuntuacion() {
-    let puntuacion: number = 1 * this.peliculaForm.controls.puntuacion.value;
+    let puntuacion: number = Number(this.peliculaForm.controls.puntuacion.value);
     (puntuacion > 0.00) && (puntuacion = puntuacion - 0.01);
     this.peliculaForm.controls.puntuacion.setValue(puntuacion.toFixed(2));
   }
